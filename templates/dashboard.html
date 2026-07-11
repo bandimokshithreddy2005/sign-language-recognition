@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Verse - Sign Recognition</title>
+<style>
+    body {font-family: Arial; background: #1e1e2f; color: #fff; display:flex; justify-content:center; align-items:center; height:100vh; margin:0;}
+    .container {display:flex; width:90%; height:80%;}
+    .camera, .info {flex:1; margin:10px; padding:20px; border-radius:15px; background:#2a2a3c;}
+    video, img {width:100%; border-radius:10px; border: 2px solid #00ffcc;}
+    button {padding:10px 20px; margin:10px; font-size:16px; cursor:pointer; border:none; border-radius:8px; background:#00ffcc; color:#000;}
+    h1 {margin:0;} h2 {margin:5px 0 20px;}
+    .gesture, .speech {margin-top:20px; font-size:24px; text-align:center;}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="camera">
+        <h1>AI Verse</h1>
+        <h2>AI-based Sign Recognition System</h2>
+        <img id="video-stream" src="">
+        <div>
+            <button onclick="startCamera()">Start Camera</button>
+            <button onclick="stopCamera()">Stop Camera</button>
+        </div>
+    </div>
+    <div class="info">
+        <div class="gesture">
+            <h3>Detected Gesture:</h3>
+            <p id="gesture-text">None</p>
+        </div>
+        <div class="speech">
+            <h3>Speech Output:</h3>
+            <p id="speech-text">None</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let intervalId;
+
+    function updateGesture() {
+        fetch('/gesture')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('gesture-text').innerText = data.gesture;
+            document.getElementById('speech-text').innerText = data.gesture;
+        });
+    }
+
+    function startCamera() {
+        fetch('/start_camera').then(() => {
+            document.getElementById('video-stream').src = '/video?dummy=' + new Date().getTime();
+            intervalId = setInterval(updateGesture, 500);
+        });
+    }
+
+    function stopCamera() {
+        fetch('/stop_camera').then(() => {
+            document.getElementById('video-stream').src = '';
+            clearInterval(intervalId);
+            document.getElementById('gesture-text').innerText = 'None';
+            document.getElementById('speech-text').innerText = 'None';
+        });
+    }
+</script>
+</body>
+</html>
